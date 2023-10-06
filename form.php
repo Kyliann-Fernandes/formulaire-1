@@ -1,52 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commande</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-    <form action="reponseform.php" method="post" class="container bg-light border rounded p-5">
-        <h1 class="text-center">Votre commande</h1>
+<?php
+$users = [];
+$sauvegarde = 'lastname=' . $_POST['lastname'] . '&firstname=' . $_POST['firstname'] . '&email=' . $_POST['email'] . '&phone=' . $_POST['phone'] . '&subject=' . $_POST['subject'] . '&message=' . $_POST['message'];
 
-        <p class="row">
-            <label for="nom" class="form-label">nom : </label>
-            <input type="text" name="nom" id="nom" class="form-control">
-        </p>
 
-        <p class="row">
-            <label for="prénom" class="form-label">prénom : </label>
-            <input type="text" name="prénom" id="prénom" class="form-control">
-        </p>
-
-        <p class="row">
-            <label for="e-mail" class="form-label">e-mail : </label>
-            <input type="text" name="e-mail" id="e-mail" class="form-control">
-        </p>
-
-        <p class="row">
-            <label for="téléphone" class="form-label">téléphone,: </label>
-            <input type="number" name="téléphone" id="téléphone" class="form-control">
-        </p>
-
-        <p class="row">
-            <label for="sujet " class="form-label">sujet : </label>
-            <input type="text" name="sujet" id="sujet " class="form-control">
-        </p>
-
-        <p class="row">
-            <label for="message" class="form-label">message: </label>
-            <input type="text" name="message" id="message" class="form-control">
-        </p>
-
-        <p class="text-center">
-            <button type="submit" class="btn btn-primary">Envoyer</button> 
-        </p>
-
-    </form>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+if ($_SERVER['REQUEST_METHOD']=== 'POST') {
+    $errors = [];
+    if (empty($_POST['lastname'])) {
+        $errors['lastname1'] = 'Veuillez renseigner votre nom';
+    }else{
+        $users['lastname'] = $_POST['lastname'];
+    }
+    if (empty($_POST['firstname'])) {
+        $errors['firstname1'] = 'Veuillez renseigner votre prénom';
+    }else{
+        $users['firstname'] = $_POST['firstname'];
+    }
+    if (empty($_POST['email'])) {
+        $errors['email1'] = 'Veuillez renseigner votre email';
+    }elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email2'] = 'Veuillez utiliser un format valide';
+    } else{
+        $users['email'] = $_POST['email'];
+    }
+    if (empty($_POST['phone'])) {
+        $errors['phone1'] = 'Veuillez renseigner votre numéro de téléphone';
+    }else{
+        $users['phone'] = $_POST['phone'];
+    }
+    if (empty($_POST['subject'])) {
+        $errors['subject1'] = 'Veuillez renseigner le motif';
+    }else{
+        $users['subject'] = $_POST['subject'];
+    }
+    if (empty($_POST['message'])) {
+        $errors['message1'] = 'Veuillez renseigner votre message';
+    }else{
+        $users['message'] = $_POST['message'];
+    }
+    if (count($errors) === 0) {
+        header('Location: merci.php?' . $sauvegarde);
+    } else {
+        header('Location: index.php?' . $sauvegarde . '&' . http_build_query($errors));
+    }
+}
